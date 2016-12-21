@@ -108,7 +108,14 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
             for fd_name, fd_value in filter_dict.items()
         ])
 
-    return lambda x: exp(x.get(filter_key, NOT_FOUND), filter_value)
+    # TODO Try to find complex paths
+    from functools import reduce
+
+    path_parts = filter_key.split('.')
+    return lambda x: exp(
+        reduce(lambda a, b: a.get(b, {}), path_parts, x) or NOT_FOUND,
+        filter_value
+    )
 
 
 def make_filter_chain(data, filters):
