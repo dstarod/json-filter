@@ -7,13 +7,22 @@
 	"text": {
 		"$in": ["yes", "no"]
 	},
-	"text": {
-		"$regex": "^ye.*$"
-	},
 	"tags": {
 		"$in": ["json"]
 	},
-	"jam": {
-		"$exists": true
+	"$or": [
+		{
+			"jam": {
+				"$exists": true
+			}
+		},
+		{
+			"text": {
+				"$regex": "^ye.*$"
+			}
+		}
+	],
+	"$not": {
+		"id": 3
 	}
 }
