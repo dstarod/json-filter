@@ -1,0 +1,7 @@
+[
+    {"id": 1, "text": "yes", "tag": 1, "tags": ["python", "json"], "enabled": true},
+    {"id": 2, "text": "no", "tag": 2, "tags": ["python", "json"], "enabled": false},
+    {"id": 3, "text": "no", "tag": 1, "tags": ["java", "python"], "enabled": false},
+    {"id": 4, "text": "not", "tag": 1, "tags": ["python"], "enabled": true},
+    {"id": 5, "text": "no", "tag": 1, "tags": ["json"], "jam": null, "enabled": true}
+]

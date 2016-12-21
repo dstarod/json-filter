@@ -1,0 +1,19 @@
+{
+	"enabled": true,
+	"id": {
+		"$lte": 5,
+		"$gt": 1
+	},
+	"text": {
+		"$in": ["yes", "no"]
+	},
+	"text": {
+		"$regex": "^ye.*$"
+	},
+	"tags": {
+		"$in": ["json"]
+	},
+	"jam": {
+		"$exists": true
+	}
+}
