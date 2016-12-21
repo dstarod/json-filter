@@ -103,8 +103,9 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
 
     if filter_key == '$nor' and type(filter_value) == list:
         return lambda x: not any([
-            gen_lambda(k, v)(x)
-            for f in filter_value for k, v in f.items()
+            gen_lambda(fd_name, fd_value)(x)
+            for filter_dict in filter_value
+            for fd_name, fd_value in filter_dict.items()
         ])
 
     return lambda x: exp(x.get(filter_key, NOT_FOUND), filter_value)
