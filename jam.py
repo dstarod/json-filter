@@ -113,7 +113,11 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
 
     path_parts = filter_key.split('.')
     return lambda x: exp(
-        reduce(lambda a, b: a.get(b, {}), path_parts, x) or NOT_FOUND,
+        reduce(
+            lambda a, b:
+                a[b] if b in a and type(a[b]) == dict else {},
+            path_parts, x
+        ) or NOT_FOUND,
         filter_value
     )
 
