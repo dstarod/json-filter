@@ -6,6 +6,15 @@ import argparse
 import re
 from argparse import RawTextHelpFormatter
 
+enabled_colors = False
+try:
+    from pygments import highlight
+    from pygments.lexers import JsonLexer
+    from pygments.formatters import TerminalFormatter
+    enabled_colors = True
+except ImportError:
+    pass
+
 # TODO https://docs.mongodb.com/v3.0/reference/operator/query/
 # Element: $type
 # Evaluation: $mod, $text, $where
@@ -111,17 +120,36 @@ def flatten(items, empty=[]):
     return empty
 
 
-def pretty_print(data):
+def compact_json(data):
+    """
+    Returns JSON-dumped dict
+    :param data:
+    :return:
+    """
+    return json.dumps(
+        data,
+        ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True
+    )
+
+
+def error_json(message):
+    return compact_json({'error': message})
+
+
+def pretty_printable(iterable_data, colorize=False):
     """
     Pretty printing JSON document
-    :param data: filter
+    :param iterable_data: filter or list
+    :param colorize: bool - colorize output if possible
     """
-    print(
-        json.dumps(
-            list(data),
-            ensure_ascii=False, indent=4, separators=(',', ': '), sort_keys=True
-        )
-    )
+    result = compact_json(list(iterable_data))
+    if colorize and not enabled_colors:
+        return error_json("Can't import pygments module")
+
+    if colorize:
+        return highlight(result, JsonLexer(), TerminalFormatter())
+
+    return result
 
 
 if __name__ == '__main__':
@@ -152,8 +180,12 @@ if __name__ == '__main__':
         help='File path to filters JSON'
     )
     parser.add_argument(
-        '--key', type=str, default='',
+        '-k', '--key', type=str, default='',
         help='Array field name for incoming map-like JSON'
+    )
+    parser.add_argument(
+        '-c', '--color', action='store_true',
+        help='Colorize output (required pygments)'
     )
     args = parser.parse_args()
 
@@ -165,28 +197,29 @@ if __name__ == '__main__':
             with open(args.filter_file) as f:
                 filters.update(json.load(f))
         except:
-            print("Can't load filters from file {}".format(
+            print(error_json("Can't load filters from file {}".format(
                 args.filter_file
-            ))
+            )))
             exit(1)
 
     if args.filter:
         try:
             filters.update(json.loads(args.filter))
         except Exception as e:
-            print("Can't recognize filters from --filter argument: {}".format(
-                args.filter
-            ))
+            print(
+                error_json(
+                    "Can't recognize filters from --filter argument: {}".format(
+                        args.filter)))
             exit(1)
 
     if args.key and type(data) == dict and args.key in data:
         data = data.get(args.key)
 
     if type(data) != list:
-        print('Expected list, got {}'.format(type(data)))
+        print(error_json('Expected list, got {}'.format(type(data))))
         exit(1)
 
     data = flatten(data)
 
     fset = make_filter_chain(data, filters)
-    pretty_print(fset)
+    print(pretty_printable(fset, args.color))
