@@ -33,6 +33,10 @@
 - $exists
 - $regex
 - $size
+- $and
+- $or
+- $nor
+- $not
 
 ### Colorize output (optional)
 
