@@ -25,6 +25,28 @@ except ImportError:
 
 NOT_FOUND = '$FiElD%N0T!F0uND&'
 
+# Regex cache
+regexps = {}
+
+
+def exp_regexp(search_string, regex_string):
+    """
+    Regex filter function
+    :param search_string: str
+    :param regex_string: str
+    :return: bool
+    """
+    if search_string is NOT_FOUND:
+        return False
+    if regex_string not in regexps:
+        try:
+            regexps[regex_string] = re.compile(regex_string)
+        except Exception:
+            print(error_json("Can't recognize regex {}".format(regex_string)))
+            exit(1)
+    return re.match(regexps[regex_string], search_string)
+
+
 expressions = {
     # Comparison
     "$gt": lambda x, y: x is not NOT_FOUND and x > y,
@@ -38,7 +60,7 @@ expressions = {
     # Element
     "$exists": lambda x, y: x is not NOT_FOUND if y else x is NOT_FOUND,
     # Evaluation
-    "$regex": lambda x, y: x is not NOT_FOUND and re.match(re.compile(y), x),
+    "$regex": exp_regexp,
     # Array
     "$size": lambda x, y: x is not NOT_FOUND and len(x) == y
 }
