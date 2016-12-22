@@ -44,7 +44,16 @@ def exp_regexp(search_string, regex_string):
         except Exception:
             print(error_json("Can't recognize regex {}".format(regex_string)))
             exit(1)
-    return re.match(regexps[regex_string], search_string)
+
+    try:
+        result = re.match(regexps[regex_string], search_string)
+    except Exception:
+        print(error_json("Can't match value <{}> by regex {}".format(
+            search_string, regex_string)
+        ))
+        exit(1)
+
+    return result
 
 
 expressions = {
@@ -64,6 +73,31 @@ expressions = {
     # Array
     "$size": lambda x, y: x is not NOT_FOUND and len(x) == y
 }
+
+
+def get_value(path, data):
+    """
+    Returns dict value by complex path
+    :param path: str - complex path, like "jam.tool" -> {"jam": {"tool": true}}
+    :param data: dict
+    :return: value or NOT_FOUND
+    """
+    step = data
+    path_parts = path.split('.')
+    for path_num, path_part in enumerate(path_parts):
+        if path_part not in step:
+            # Next path part not found
+            return NOT_FOUND
+
+        step = step[path_part]
+
+        if type(step) != dict:
+            if path_num < len(path_parts)-1:
+                # Found path shorter than expected
+                return NOT_FOUND
+            return step
+
+    return NOT_FOUND
 
 
 def gen_lambda(filter_key, filter_value, exp_name='$eq'):
@@ -108,7 +142,10 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
             for fd_name, fd_value in filter_dict.items()
         ])
 
-    return lambda x: exp(x.get(filter_key, NOT_FOUND), filter_value)
+    return lambda x: exp(
+        get_value(filter_key, x),
+        filter_value
+    )
 
 
 def make_filter_chain(data, filters):
