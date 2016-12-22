@@ -46,7 +46,7 @@ def exp_regexp(search_string, regex_string):
             exit(1)
 
     try:
-        result = re.match(regexps[regex_string], search_string)
+        result = re.match(regexps[regex_string], str(search_string))
     except Exception:
         print(error_json("Can't match value <{}> by regex {}".format(
             search_string, regex_string)
