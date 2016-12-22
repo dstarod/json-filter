@@ -44,7 +44,16 @@ def exp_regexp(search_string, regex_string):
         except Exception:
             print(error_json("Can't recognize regex {}".format(regex_string)))
             exit(1)
-    return re.match(regexps[regex_string], search_string)
+
+    try:
+        result = re.match(regexps[regex_string], search_string)
+    except Exception:
+        print(error_json("Can't match value <{}> by regex {}".format(
+            search_string, regex_string)
+        ))
+        exit(1)
+
+    return result
 
 
 expressions = {
