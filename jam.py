@@ -145,7 +145,9 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
     return lambda x: exp(
         get_value(filter_key, x),
         filter_value
-    )
+    ) if type(get_value(filter_key, x)) is not list else all([
+        exp(val, filter_value) for val in get_value(filter_key, x)
+    ])
 
 
 def make_filter_chain(data, filters):
