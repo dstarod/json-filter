@@ -65,7 +65,7 @@ expressions = {
     "$lte": lambda x, y: x is not NOT_FOUND and x <= y,
     "$ne": lambda x, y: x is not NOT_FOUND and x != y,
     "$in": lambda x, y: x is not NOT_FOUND and (set(x) & set(y) if type(x) == list else x in y),
-    "$nin": lambda x, y: x is not NOT_FOUND and x not in y,
+    "$nin": lambda x, y: x is not NOT_FOUND and (not set(x) & set(y) if type(x) == list else x not in y),
     # Element
     "$exists": lambda x, y: x is not NOT_FOUND if y else x is NOT_FOUND,
     # Evaluation
