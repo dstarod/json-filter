@@ -10,7 +10,7 @@
 
 #### Write your filter inline
 
-    wget -qO - "http://rest.best.com/data" | jam -f '{"success": false, "percent": {"$lt": 100}}'
+    wget -qO - "http://rest.best.com/data" | jam -f '{"jam.tool": true}'
 
 #### Read filters from file
 
@@ -41,4 +41,4 @@
 ### Colorize output (optional)
 
     python3 -m pip install Pygments
-    cat examples/data.json  | jam -ff examples/filter.json  | pygmentize -l json
+    cat examples/data.json  | jam -ff examples/filter.json -c
