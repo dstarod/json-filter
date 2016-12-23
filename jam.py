@@ -172,7 +172,6 @@ def make_filter_chain(data, filters):
     :param filters: dict - filters
     :return: filter
     """
-    # TODO: $and, $or, $not, $nor
     return filter(
         lambda x: all([
             gen_lambda(field_name, filter_value)(x)
