@@ -16,13 +16,13 @@ class StripDot(distutils.command.install_scripts.install_scripts):
 
 if __name__ == '__main__':
     setup(
-        name='jam',
+        name='json-filter',
         version='0.3.0',
         description='JSON Mongo-like filter',
         author='dstarod',
         author_email='dmitry.starodubcev@gmail.com',
         scripts=[
-            'jam.py',
+            'jf.py',
         ],
         cmdclass={"install_scripts": StripDot}
     )

@@ -83,7 +83,7 @@ expressions = {
 def get_values(path, data):
     """
     Returns all available values by complex path
-    :param path: str - complex path, like "jam.tool" -> {"jam": {"tool": true}}
+    :param path: str - complex path, like "jf.tool" -> {"jf": {"tool": true}}
     :param data: dict
     :return: list - values
     """
@@ -246,9 +246,9 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser(description='''
-    JAM: JSON Mongo-like filter
+    JSON filter with MongoDB shell syntax
     How to use:
-    wget -qO - "http://rest.com/data" | jam -f \\
+    wget -qO - "http://rest.com/data" | jf -f \\
     '{"success": false, "errors": {"$size": 2}}'
     ''', formatter_class=RawTextHelpFormatter)
     parser.add_argument(
