@@ -75,29 +75,30 @@ expressions = {
 }
 
 
-def get_value(path, data):
+def get_values(path, data):
     """
-    Returns dict value by complex path
+    Returns all available values by complex path
     :param path: str - complex path, like "jam.tool" -> {"jam": {"tool": true}}
     :param data: dict
-    :return: value or NOT_FOUND
+    :return: list - values or NOT_FOUND
     """
+    empty_result = [NOT_FOUND]
     step = data
     path_parts = path.split('.')
     for path_num, path_part in enumerate(path_parts):
         if path_part not in step:
             # Next path part not found
-            return NOT_FOUND
+            return empty_result
 
         step = step[path_part]
 
         if type(step) != dict:
             if path_num < len(path_parts)-1:
                 # Found path shorter than expected
-                return NOT_FOUND
-            return step
+                return empty_result
+            return step if type(step) == list else [step]
 
-    return NOT_FOUND
+    return empty_result
 
 
 def gen_lambda(filter_key, filter_value, exp_name='$eq'):
@@ -142,11 +143,8 @@ def gen_lambda(filter_key, filter_value, exp_name='$eq'):
             for fd_name, fd_value in filter_dict.items()
         ])
 
-    return lambda x: exp(
-        get_value(filter_key, x),
-        filter_value
-    ) if type(get_value(filter_key, x)) is not list else all([
-        exp(val, filter_value) for val in get_value(filter_key, x)
+    return lambda x: any([
+       exp(val, filter_value) for val in get_values(filter_key, x)
     ])
 
 
