@@ -1,0 +1,6 @@
+[
+  {"name": "John", "skills": [{"title": "driving", "exp": 20}]},
+  {"name": "Simon", "skills": [{"title": "cooking", "exp": 4}]},
+  {"name": "Chloe", "skills": [{"title": "coding", "exp": 15}]},
+  {"name": "Michael", "skills": [{"title": "driving", "exp": 10}]}
+]

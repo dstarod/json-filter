@@ -1,0 +1,4 @@
+{
+  "skills.title": "driving",
+  "skills.exp": {"$gt": 10}
+}
