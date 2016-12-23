@@ -272,8 +272,8 @@ if __name__ == '__main__':
                         args.filter)))
             exit(1)
 
-    if args.key and type(data) == dict and args.key in data:
-        data = data.get(args.key)
+    if args.key and type(data) == dict:
+        data = get_values(args.key, data)
 
     if type(data) != list:
         print(error_json('Expected list, got {}'.format(type(data))))
