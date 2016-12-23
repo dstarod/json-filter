@@ -4,7 +4,7 @@
 
 ### How to install
 
-    python3 -m pip install git+https://github.com/dstarod/json-filter
+    pip3 install json-filter
 
 ### How to use
 
