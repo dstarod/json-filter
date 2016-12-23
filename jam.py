@@ -87,6 +87,9 @@ def get_values(path, data):
     :param data: dict
     :return: list - values
     """
+    if type(data) != dict:
+        raise JFError("Expected dict")
+
     step = data
     path_parts = path.split('.')
     for path_num, path_part in enumerate(path_parts):
@@ -101,6 +104,8 @@ def get_values(path, data):
                 next_path_parts = '.'.join(path_parts[path_num+1:])
                 ret = []
                 for part_data in step:
+                    if type(part_data) != dict:
+                        continue
                     ret.extend(get_values(next_path_parts, part_data))
                 return ret
             return step
