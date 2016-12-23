@@ -29,6 +29,13 @@ NOT_FOUND = '$FiElD%N0T!F0uND&'
 regexps = {}
 
 
+class JFError(Exception):
+    def __init__(self, *args, **kwargs):
+        super(Exception, self).__init__(*args, **kwargs)
+        print(error_json(str(self)))
+        exit(1)
+
+
 def exp_regexp(search_string, regex_string):
     """
     Regex filter function
@@ -42,16 +49,14 @@ def exp_regexp(search_string, regex_string):
         try:
             regexps[regex_string] = re.compile(regex_string)
         except Exception:
-            print(error_json("Can't recognize regex {}".format(regex_string)))
-            exit(1)
+            raise JFError("Can't recognize regex {}".format(regex_string))
 
     try:
         result = re.match(regexps[regex_string], str(search_string))
     except Exception:
-        print(error_json("Can't match value <{}> by regex {}".format(
+        raise JFError("Can't match value <{}> by regex {}".format(
             search_string, regex_string)
-        ))
-        exit(1)
+        )
 
     return result
 
@@ -211,7 +216,7 @@ def pretty_printable(iterable_data, colorize=False):
     """
     result = compact_json(list(iterable_data))
     if colorize and not enabled_colors:
-        return error_json("Can't import pygments module")
+        raise JFError("Can't import pygments module")
 
     if colorize:
         return highlight(result, JsonLexer(), TerminalFormatter())
@@ -263,28 +268,25 @@ if __name__ == '__main__':
         try:
             with open(args.filter_file) as f:
                 filters.update(json.load(f))
-        except:
-            print(error_json("Can't load filters from file {}".format(
+        except Exception:
+            raise JFError("Can't load filters from file {}".format(
                 args.filter_file
-            )))
-            exit(1)
+            ))
 
     if args.filter:
         try:
             filters.update(json.loads(args.filter))
         except Exception as e:
-            print(
-                error_json(
-                    "Can't recognize filters from --filter argument: {}".format(
-                        args.filter)))
-            exit(1)
+            raise JFError(
+                "Can't recognize filters from --filter argument: {}".format(
+                    args.filter)
+            )
 
     if args.key and type(data) == dict:
         data = get_values(args.key, data)
 
     if type(data) != list:
-        print(error_json('Expected list, got {}'.format(type(data))))
-        exit(1)
+        raise JFError('Expected list, got {}'.format(type(data)))
 
     data = flatten(data)
 
