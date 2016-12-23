@@ -80,25 +80,32 @@ def get_values(path, data):
     Returns all available values by complex path
     :param path: str - complex path, like "jam.tool" -> {"jam": {"tool": true}}
     :param data: dict
-    :return: list - values or NOT_FOUND
+    :return: list - values
     """
-    empty_result = [NOT_FOUND]
     step = data
     path_parts = path.split('.')
     for path_num, path_part in enumerate(path_parts):
         if path_part not in step:
             # Next path part not found
-            return empty_result
+            return []
 
         step = step[path_part]
+
+        if type(step) == list:
+            if path_num < len(path_parts)-1:
+                next_path_parts = '.'.join(path_parts[path_num+1:])
+                ret = []
+                for part_data in step:
+                    ret.extend(get_values(next_path_parts, part_data))
+                return ret
+            return step
 
         if type(step) != dict:
             if path_num < len(path_parts)-1:
                 # Found path shorter than expected
-                return empty_result
-            return step if type(step) == list else [step]
-
-    return empty_result
+                return []
+            else:
+                return [step]
 
 
 def gen_lambda(filter_key, filter_value, exp_name='$eq'):
