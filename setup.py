@@ -18,6 +18,7 @@ if __name__ == '__main__':
     setup(
         name='json-filter',
         version='0.3.0',
+        url='https://dstarod.github.io/',
         description='JSON Mongo-like filter',
         author='dstarod',
         author_email='dmitry.starodubcev@gmail.com',
