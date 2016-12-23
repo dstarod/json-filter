@@ -209,6 +209,11 @@ def pretty_json(data):
 
 
 def error_json(message):
+    """
+    Returns pretty JSON-form error message
+    :param message: str
+    :return: str
+    """
     return pretty_json({'error': message})
 
 
