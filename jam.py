@@ -196,7 +196,7 @@ def flatten(items, empty=[]):
     return empty
 
 
-def compact_json(data):
+def pretty_json(data):
     """
     Returns JSON-dumped dict
     :param data:
@@ -209,7 +209,7 @@ def compact_json(data):
 
 
 def error_json(message):
-    return compact_json({'error': message})
+    return pretty_json({'error': message})
 
 
 def pretty_printable(iterable_data, colorize=False):
@@ -218,7 +218,7 @@ def pretty_printable(iterable_data, colorize=False):
     :param iterable_data: filter or list
     :param colorize: bool - colorize output if possible
     """
-    result = compact_json(list(iterable_data))
+    result = pretty_json(list(iterable_data))
     if colorize and not enabled_colors:
         raise JFError("Can't import pygments module")
 
