@@ -18,12 +18,15 @@ if __name__ == '__main__':
     setup(
         name='json-filter',
         version='0.3.0',
-        url='https://dstarod.github.io/',
-        description='JSON Mongo-like filter',
+        url='https://github.com/dstarod/json-filter',
+        description='JSON filter with MongoDB shell syntax',
         author='dstarod',
         author_email='dmitry.starodubcev@gmail.com',
         scripts=[
             'jf.py',
         ],
-        cmdclass={"install_scripts": StripDot}
+        cmdclass={"install_scripts": StripDot},
+        classifiers=['Topic :: Utilities'],
+        keywords=['json', 'mongodb'],
+        download_url='https://github.com/dstarod/json-filter/tarball/0.3.0'
     )
