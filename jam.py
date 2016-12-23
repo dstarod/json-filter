@@ -266,7 +266,11 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    data = json.loads(sys.stdin.read())
+    try:
+        data = json.loads(sys.stdin.read())
+    except Exception:
+        raise JFError("Can't get correct JSON from stdin")
+
     filters = {}
 
     if args.filter_file:
