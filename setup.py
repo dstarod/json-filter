@@ -17,16 +17,14 @@ class StripDot(distutils.command.install_scripts.install_scripts):
 if __name__ == '__main__':
     setup(
         name='json-filter',
-        version='0.3.1',
+        version='0.3.2',
         url='https://github.com/dstarod/json-filter',
         description='JSON filter with MongoDB shell syntax',
         author='dstarod',
         author_email='dmitry.starodubcev@gmail.com',
-        scripts=[
-            'jf.py',
-        ],
+        scripts=['bin/jf.py'],
         cmdclass={"install_scripts": StripDot},
         classifiers=['Topic :: Utilities'],
         keywords=['json', 'mongodb'],
-        download_url='https://github.com/dstarod/json-filter/tarball/0.3.1'
+        download_url='https://github.com/dstarod/json-filter/tarball/0.3.2'
     )
