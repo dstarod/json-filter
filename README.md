@@ -38,6 +38,7 @@
 - $nor: joins query clauses with a logical NOR returns all documents that fail to match both clauses; 
 - $not: inverts the effect of a query expression and returns documents that do not match the query expression.
 
+### Filter example 
 
     {
         "field1": "value1",
