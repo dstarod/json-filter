@@ -30,10 +30,11 @@ regexps = {}
 
 
 class JFError(Exception):
-    def __init__(self, *args, **kwargs):
-        super(Exception, self).__init__(*args, **kwargs)
-        print(error_json(str(self)))
-        exit(1)
+    pass
+
+
+class RegexpError(JFError):
+    pass
 
 
 def exp_regexp(search_string, regex_string):
@@ -45,20 +46,13 @@ def exp_regexp(search_string, regex_string):
     """
     if search_string is NOT_FOUND:
         return False
-    if regex_string not in regexps:
-        try:
-            regexps[regex_string] = re.compile(regex_string)
-        except Exception:
-            raise JFError("Can't recognize regex {}".format(regex_string))
 
     try:
-        result = re.match(regexps[regex_string], str(search_string))
+        if regex_string not in regexps:
+            regexps[regex_string] = re.compile(regex_string)
+        return re.match(regexps[regex_string], str(search_string))
     except Exception:
-        raise JFError("Can't match value <{}> by regex {}".format(
-            search_string, regex_string)
-        )
-
-    return result
+        raise RegexpError
 
 
 expressions = {
@@ -88,7 +82,7 @@ def get_values(path, data):
     :return: list - values
     """
     if type(data) != dict:
-        raise JFError("Expected dict")
+        raise JFError("Expected dict, got {}".format(type(data)))
 
     step = data
     path_parts = path.split('.')
@@ -233,6 +227,37 @@ def pretty_printable(iterable_data, colorize=False):
     return result
 
 
+def read_data_from_stdin():
+    try:
+        return json.loads(sys.stdin.read())
+    except Exception:
+        raise JFError("Can't get correct JSON from stdin")
+
+
+def load_data_from_file(path):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except IOError:
+        raise JFError("Can't load file {}".format(
+            args.filter_file
+        ))
+    except Exception:
+        raise JFError("Can't read filters from file {}".format(
+            args.filter_file
+        ))
+
+
+def read_json_string(string):
+    try:
+        return json.loads(string)
+    except Exception as e:
+        raise JFError(
+            "Can't recognize filters from --filter argument: {}".format(
+                args.filter)
+        )
+
+
 if __name__ == '__main__':
     """
     Data:
@@ -271,37 +296,28 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        data = json.loads(sys.stdin.read())
-    except Exception:
-        raise JFError("Can't get correct JSON from stdin")
+        filters = {}
+        data = read_data_from_stdin()
 
-    filters = {}
+        if args.filter_file:
+            filters.update(load_data_from_file(args.filter_file))
 
-    if args.filter_file:
-        try:
-            with open(args.filter_file) as f:
-                filters.update(json.load(f))
-        except Exception:
-            raise JFError("Can't load filters from file {}".format(
-                args.filter_file
-            ))
+        if args.filter:
+            filters.update(read_json_string(args.filter))
 
-    if args.filter:
-        try:
-            filters.update(json.loads(args.filter))
-        except Exception as e:
-            raise JFError(
-                "Can't recognize filters from --filter argument: {}".format(
-                    args.filter)
-            )
+        if args.key and type(data) == dict:
+            data = get_values(args.key, data)
 
-    if args.key and type(data) == dict:
-        data = get_values(args.key, data)
+        if type(data) != list:
+            raise JFError('Expected list, got {}'.format(type(data)))
 
-    if type(data) != list:
-        raise JFError('Expected list, got {}'.format(type(data)))
+        data = flatten(data)
+        fset = make_filter_chain(data, filters)
+        print(pretty_printable(fset, args.color))
+        exit(0)
 
-    data = flatten(data)
-
-    fset = make_filter_chain(data, filters)
-    print(pretty_printable(fset, args.color))
+    except RegexpError:
+        print(error_json("Wrong regex operation"))
+    except (JFError, Exception) as e:
+        print(error_json(str(e)))
+    exit(1)
