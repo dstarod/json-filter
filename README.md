@@ -20,23 +20,46 @@
 
     wget -qO - "http://rest.best.com/data" | jf -ff /path/to/filters.json -f "{"errors": {"$size": 2}}"
 
-### What are you can now
-    
-- $gt
-- $gte
-- $eq
-- $lt
-- $lte
-- $ne
-- $in
-- $nin
-- $exists
-- $regex
-- $size
-- $and
-- $or
-- $nor
-- $not
+### Available expressions
+
+- $gt: matches values that are greater than a specified value;
+- $gte: matches values that are greater than or equal to a specified value;
+- $eq: matches values that are equal to a specified value;
+- $lt: matches values that are less than a specified value;
+- $lte: matches values that are less than or equal to a specified value;
+- $ne: matches all values that are not equal to a specified value;
+- $in: matches any of the values specified in an array;
+- $nin: matches none of the values specified in an array;
+- $exists: matches documents that have the specified field;
+- $regex: selects documents where values match a specified regular expression;
+- $size: selects documents if the array field is a specified size;
+- $and: joins query clauses with a logical AND returns all documents that match the conditions of both clauses;
+- $or: joins query clauses with a logical OR returns all documents that match the conditions of either clause;
+- $nor: joins query clauses with a logical NOR returns all documents that fail to match both clauses; 
+- $not: inverts the effect of a query expression and returns documents that do not match the query expression.
+
+
+    {
+        "field1": "value1",
+        "field2": {
+            "$gt": "field2_value"
+        },
+        "field3": {
+            "$or": [
+                {
+                    "name1": "value1"
+                },
+                {
+                    "name2": {
+                        "$in": [
+                            "val1",
+                            "val2"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
 
 ### Colorize output (optional)
 
